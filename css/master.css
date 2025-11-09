@@ -70,7 +70,6 @@ body {
   margin: 0;
   padding: 0;
   background-color: #000;
-  /*	font-family: 'Times New Roman', 'Times', 'Georgia', serif;*/
   font-family: "Heitz-Regular", "Helvetica", "Arial", sans-serif;
   font-size: 1em;
   overflow: auto;
@@ -122,6 +121,7 @@ body {
   z-index: 999999999999999999999999999999999999999 !important;
 }
 
+/* 기존 animatedparentaddclass는 JS에서 더 이상 안 쓰면 사실상 죽은 클래스지만, 남겨둬도 영향 없음 */
 .animatedparentaddclass {
   margin-top: calc(100vh - 6.5vmax - 6.5vmin);
 }
@@ -227,18 +227,20 @@ body {
     0 0 25px rgba(255, 255, 255, 0.8), 0 0 35px rgba(255, 255, 255, 0.6);
 }
 
+/* ======================
+   설명 패널: 전체 화면 오버레이
+   ====================== */
 .author_content {
   position: fixed;
   top: 0;
   left: 0;
 
   width: 100%;
-  height: 50vh;
+  height: 100vh; /* 항상 전체 화면 */
   background-color: #000;
   overflow: hidden;
   z-index: 99999;
 
-  /* 처음에는 안 보이게 */
   opacity: 0;
   pointer-events: none;
 
@@ -250,7 +252,6 @@ body {
 }
 
 .authorcontentshowhide {
-  /* 클릭 시 페이드 인 */
   opacity: 1;
   pointer-events: auto;
 }
@@ -259,7 +260,7 @@ body {
   position: absolute;
   display: block;
   width: 100%;
-  height: 50vh;
+  height: 100vh; /* 내부 스크롤도 전체 높이 기준 */
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -269,23 +270,15 @@ body {
 }
 
 .inner_author_content {
-  position: absolute;
+  position: relative;
   display: block;
   width: 100%;
   height: auto;
 }
 
+/* 가운데 가로선은 빼버림 (검정 화면 + 텍스트만 남기려고) */
 .author_content_border {
-  position: absolute;
-  display: block;
-  z-index: 999999999999;
-  height: 0.3vw;
-  width: 100%;
-  top: calc(50vh - 0.3vw);
-  background-color: #fff;
-  left: 0;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
-    0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+  display: none;
 }
 
 .author_content_col_left {
@@ -332,7 +325,7 @@ p.author_content_txt {
   font-size: 0.75em;
   line-height: 125%;
   letter-spacing: 0.025em;
-  padding-bottom: calc(2vh + 0.3vw);
+  padding-bottom: 2vh;
 }
 
 p.author_content_txt a {
@@ -347,6 +340,7 @@ p.author_content_txt a:hover {
   border-bottom: 2px solid #fff;
 }
 
+/* 닫기 X */
 .btnclose {
   position: absolute;
   top: 10px;
@@ -474,6 +468,7 @@ p.author_content_txt a:hover {
   overflow: hidden;
 }
 
+/* 메뉴 – 기본은 데스크탑이지만 vw 기반이라 모바일 비율이랑 크게 다르지 않음 */
 ul.list_menu {
   font-size: 3vw;
 }
@@ -501,12 +496,6 @@ ul.list_menu a {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
     0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
 }
-
-/*
-a:visited li{
-	color:#939393;
-}
-*/
 
 ul.list_menu a li:hover {
   text-shadow: 0 0 15px rgba(255, 255, 255, 1),
@@ -600,29 +589,18 @@ p.title_menu:after {
     height: 100%;
   }
 
-  .wrappermenuaddclass {
-    margin-top: 100vh;
-    height: 0vh;
-  }
-  .innerwrappermenuaddclass {
-    height: 0vh;
-  }
-  .author_content {
-    margin-top: calc(-100vh - 3px);
-    height: calc(100vh + 0.3vw);
-  }
-  .authorcontentshowhide {
-    margin-top: 0vh;
-  }
+  /* 여기서 더 이상 margin-top으로 슬라이드 안 함.
+     author_content는 어디서나 100vh 고정 + opacity로만 동작 */
   .preinner_author_content {
     height: 100vh;
   }
+
   .btnclose {
     display: block;
   }
   .author_content_border {
     width: 100%;
-    top: calc(100vh);
+    top: 100vh;
   }
 
   .author_content,
@@ -729,32 +707,6 @@ p.title_menu:after {
     padding-bottom: 2.25vw;
   }
 
-  .collapsible-title h5 {
-    font-size: calc(6vw * 1.5);
-  }
-  .toggle-content-border-top {
-    top: -1px;
-    height: 2px;
-  }
-  .toggle-content-border-bottom {
-    bottom: -1px;
-    height: 2px;
-  }
-  .toggle-content-border-bottom-last {
-    bottom: 0;
-  }
-
-  .collapsible-title {
-    height: 33.333333vh;
-  }
-  div.page-text.fiji-text p {
-    width: calc(100% - 4vh);
-    margin-left: 2vh;
-  }
-  div.page-text.link-text p {
-    width: calc(100% - 4vh);
-    margin-left: 2vh;
-  }
   span.nb_menu {
     left: 1vw;
   }
@@ -818,32 +770,6 @@ p.title_menu:after {
     padding-bottom: 2.25vw;
   }
 
-  .collapsible-title h5 {
-    font-size: calc(3vw * 1.5);
-  }
-  .toggle-content-border-top {
-    top: -1px;
-    height: 2px;
-  }
-  .toggle-content-border-bottom {
-    bottom: -1px;
-    height: 2px;
-  }
-  .toggle-content-border-bottom-last {
-    bottom: 0;
-  }
-
-  .collapsible-title {
-    height: 33.333333vh;
-  }
-  div.page-text.fiji-text p {
-    width: calc(100% - 4vh);
-    margin-left: 2vh;
-  }
-  div.page-text.link-text p {
-    width: calc(100% - 4vh);
-    margin-left: 2vh;
-  }
   span.nb_menu {
     left: 1vw;
   }
