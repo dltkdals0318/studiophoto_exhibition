@@ -115,15 +115,12 @@ $(document).ready(function () {
      ========================== */
 
   $(".author_name, .author_name_mobile").on("click", function () {
-    // 설명창만 페이드 인/아웃
     $(".author_content").toggleClass("authorcontentshowhide");
 
-    // 모바일용 작가 이름 표시/숨김 (필요 없으면 이 줄도 지워도 됨)
     $(".author_name_mobile").toggleClass("showhideauthor");
   });
 
   $(".btnclose").on("click", function () {
-    // 닫기 버튼은 무조건 닫기
     $(".author_content").removeClass("authorcontentshowhide");
     $(".author_name_mobile").toggleClass("showhideauthor");
   });
