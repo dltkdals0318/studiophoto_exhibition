@@ -12,8 +12,9 @@ $(document).ready(function () {
      이미지 뷰어 기능
      ========================== */
 
-  $("a[data-img]").on("click", function (e) {
+  $(document).on("click", "a[data-img]", function (e) {
     e.preventDefault();
+
     var imgNumber = $(this).data("img");
     var imgPath = "source/img/" + imgNumber + ".jpg";
 
@@ -44,15 +45,15 @@ $(document).ready(function () {
      모바일용 루프 메뉴 복제
      ========================== */
 
-  if (
+  var isMobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent
-    )
-  ) {
+    );
+
+  if (isMobile) {
     var tocopy = $(".menutocopy");
-    // 필요 이상으로 많은 복제는 성능에 영향을 줄 수 있음
-    // 무한 스크롤 느낌만 유지되면 되므로, 145 → 40 정도로 축소
-    for (var i = 0; i < 40; i++) {
+    // 모바일에서는 과하게 안 돌리고 6~8 정도만 반복
+    for (var i = 0; i < 8; i++) {
       tocopy.clone().insertAfter(tocopy);
     }
   }
@@ -74,20 +75,20 @@ $(document).ready(function () {
   $(window).on("resize", setMargins);
   $(window).on("scroll", setMargins);
 
-  // 실제 루프 스크롤은 .scrollcontroller 에서 처리
-  $(".scrollcontroller").on("scroll", function () {
-    var $this = $(this);
+  // 데스크톱에서만 무한 루프 스크롤
+  if (!isMobile) {
+    $(".scrollcontroller").on("scroll", function () {
+      var $this = $(this);
 
-    // 아래로 끝까지 갔을 때 다시 위로
-    if ($this.scrollTop() >= bottomofpage - 1) {
-      $this.scrollTop(2);
-    }
+      if ($this.scrollTop() >= bottomofpage - 1) {
+        $this.scrollTop(2);
+      }
 
-    // 위로 끝까지 갔을 때 다시 아래로
-    if ($this.scrollTop() <= 1) {
-      $this.scrollTop(bottomofpage - 2);
-    }
-  });
+      if ($this.scrollTop() <= 1) {
+        $this.scrollTop(bottomofpage - 2);
+      }
+    });
+  }
 
   /* ==========================
      두 스크롤 요소 동기화
