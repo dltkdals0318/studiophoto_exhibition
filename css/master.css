@@ -975,3 +975,18 @@ p.title_menu:after {
   max-height: 70vh;
   object-fit: contain;
 }
+
+.author_video_wrapper {
+  margin-top: 10vh;
+}
+
+.author_video {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.author_video.no-interaction {
+  pointer-events: none; /* 클릭, 드래그, 우클릭 전부 무시 */
+}
