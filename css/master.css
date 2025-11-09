@@ -672,21 +672,21 @@ p.title_menu:after {
 
 @media screen and (max-width: 767px) and (orientation: portrait) {
   .author_name {
-    top: 18vw;
+    top: 10vw;
     left: -11vw;
     font-size: 3vw;
     width: 33.2vw;
   }
 
   .author_name_mobile {
-    top: 18vw;
-    left: calc(-4.1vw - 11px);
+    top: 1vw;
+    left: calc(-4.1vw +3px);
     font-size: 3vw;
     width: calc(32vw + 8px);
   }
 
   .authornamemobileaddclass {
-    top: calc(100vh + 18vw);
+    top: calc(100vh + 10vw);
   }
 
   .animatedparent {
