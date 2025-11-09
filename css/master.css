@@ -98,6 +98,13 @@ body {
   color: #fff;
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.6),
     0 0 15px rgba(255, 255, 255, 0.4);
+
+  /* 하이픈/강제 줄바꿈 방지 */
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  word-wrap: normal;
+  word-break: keep-all;
 }
 
 .animatedparent {
