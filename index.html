@@ -531,54 +531,7 @@
     <script src="js/jquery-2.1.4.min.js"></script>
 
     <!-- 간단한 기능 스크립트 -->
+    <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/functions.js"></script>
-
-    <!-- 양방향 루프 스크롤 -->
-    <script type="text/javascript">
-      (function () {
-        var isAutoScrolling = false;
-        var RESET_DELAY = 400;
-
-        function atBottom() {
-          var current = window.pageYOffset + window.innerHeight;
-          var full =
-            document.documentElement.scrollHeight || document.body.scrollHeight;
-          return current >= full - 2;
-        }
-
-        function atTop() {
-          return window.pageYOffset <= 0;
-        }
-
-        function scrollToTopSmooth() {
-          isAutoScrolling = true;
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          setTimeout(function () {
-            isAutoScrolling = false;
-          }, RESET_DELAY);
-        }
-
-        function scrollToBottomSmooth() {
-          isAutoScrolling = true;
-          var full =
-            document.documentElement.scrollHeight || document.body.scrollHeight;
-          var target = full - window.innerHeight;
-          window.scrollTo({ top: target, behavior: "smooth" });
-          setTimeout(function () {
-            isAutoScrolling = false;
-          }, RESET_DELAY);
-        }
-
-        window.addEventListener("scroll", function () {
-          if (isAutoScrolling) return;
-
-          if (atBottom()) {
-            scrollToTopSmooth();
-          } else if (atTop()) {
-            scrollToBottomSmooth();
-          }
-        });
-      })();
-    </script>
   </body>
 </html>

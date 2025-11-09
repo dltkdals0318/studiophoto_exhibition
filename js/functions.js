@@ -1,77 +1,17 @@
 // JavaScript Document
 
-// http://stackoverflow.com/questions/118241/calculate-text-width-with-javascript
-// this version here is adjusted to be more dynamic
-
-(function ($) {
-  $.textMetrics = function (el) {
-    var tm = document.createElement("span"),
-      $tm = $(tm);
-    $tm.css({
-      border: 0,
-      padding: 0,
-      position: "absolute",
-      visibility: "hidden",
-    });
-
-    tm.appendChild(document.createTextNode(el.textContent || el.innerText));
-
-    el.appendChild(tm);
-    var rect = tm.getClientRects()[0];
-    $tm.remove();
-
-    return {
-      height: rect.bottom - rect.top,
-      width: rect.right - rect.left,
-    };
-  };
-})(jQuery);
-
-// custom implementation
-$(function () {
-  $("p.title_menu").each(function () {
-    var widths = [],
-      maxwidth = 0,
-      width = 0;
-    $(this)
-      .children("span")
-      .each(function () {
-        width = $.textMetrics(this)["width"];
-        widths.push({ el: this, width: width });
-        if (maxwidth < width) maxwidth = width;
-      });
-    widths.forEach(function (w, i) {
-      $(w.el).css({
-        "font-size": (w.width > 0 ? maxwidth / w.width : 0).toFixed(5) + "em",
-      });
-    });
-  });
-});
+// 간단한 기능만 남긴 정리 버전
 
 $(document).ready(function () {
-  /* INITIALIZE */
-  setInterval(function () {
+  /* 초기 로딩 시 transition 활성화 */
+  setTimeout(function () {
     $("body").removeClass("notransitionreal");
-  }, 1);
+  }, 100);
 
-  /* ACCORDION */
+  /* ==========================
+     이미지 뷰어 기능
+     ========================== */
 
-  var acc = document.getElementsByClassName("collapsible-title");
-  var i;
-
-  for (i = 0; i < acc.length; i++) {
-    acc[i].onclick = function () {
-      this.classList.toggle("active");
-      var panel = this.nextElementSibling;
-      if (panel.style.maxHeight) {
-        panel.style.maxHeight = null;
-      } else {
-        panel.style.maxHeight = panel.scrollHeight + "px";
-      }
-    };
-  }
-
-  /* 이미지 뷰어 기능 */
   $("a[data-img]").on("click", function (e) {
     e.preventDefault();
     var imgNumber = $(this).data("img");
@@ -81,12 +21,12 @@ $(document).ready(function () {
     $("#imageViewer").addClass("active");
   });
 
-  // 이미지 뷰어 닫기
+  // 닫기 버튼
   $("#imageClose").on("click", function () {
     $("#imageViewer").removeClass("active");
   });
 
-  // 뷰어 배경 클릭시 닫기
+  // 뷰어 배경 클릭 시 닫기 (이미지 영역 클릭은 무시)
   $("#imageViewer").on("click", function (e) {
     if (e.target === this) {
       $(this).removeClass("active");
@@ -100,19 +40,9 @@ $(document).ready(function () {
     }
   });
 
-  /* responsive offset */
-
-  var borderforoffset; // declare variables in this scope
-
-  function setOffset() {
-    borderforoffset = $(".author_content_border").height();
-  }
-
-  setOffset(); // just call the function
-
-  $(window).resize(setOffset);
-
-  /* fake loop clone of div for mobile */
+  /* ==========================
+     모바일용 루프 메뉴 복제
+     ========================== */
 
   if (
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -120,39 +50,48 @@ $(document).ready(function () {
     )
   ) {
     var tocopy = $(".menutocopy");
-    for (var i = 0; i < 145; i++) {
+    // 필요 이상으로 많은 복제는 성능에 영향을 줄 수 있음
+    // 무한 스크롤 느낌만 유지되면 되므로, 145 → 40 정도로 축소
+    for (var i = 0; i < 40; i++) {
       tocopy.clone().insertAfter(tocopy);
     }
   }
 
-  /* LOOP */
+  /* ==========================
+     스크롤 루프 처리 (.scrollcontroller)
+     ========================== */
 
-  $(".precontainer_menu").scrollTop(2);
+  var bottomofpage = 0;
 
   function setMargins() {
     bottomofpage = $("#wrappertobottom").height();
   }
 
-  setMargins(); // just call the function
+  // 최초 한 번 계산
+  setMargins();
 
+  // 창 크기 / 스크롤 위치 변경 시 높이 재계산
   $(window).on("resize", setMargins);
   $(window).on("scroll", setMargins);
 
-  $(".scrollcontroller").scroll(function () {
-    // loop down vers up
+  // 실제 루프 스크롤은 .scrollcontroller 에서 처리
+  $(".scrollcontroller").on("scroll", function () {
+    var $this = $(this);
 
-    if ($(".scrollcontroller").scrollTop() >= bottomofpage - 1) {
-      $(".scrollcontroller").scrollTop(2);
+    // 아래로 끝까지 갔을 때 다시 위로
+    if ($this.scrollTop() >= bottomofpage - 1) {
+      $this.scrollTop(2);
     }
 
-    // loop up vers down
-
-    if ($(".scrollcontroller").scrollTop() <= 1) {
-      $(".scrollcontroller").scrollTop(bottomofpage - 2);
+    // 위로 끝까지 갔을 때 다시 아래로
+    if ($this.scrollTop() <= 1) {
+      $this.scrollTop(bottomofpage - 2);
     }
   });
 
-  /* link between two scrolling elements */
+  /* ==========================
+     두 스크롤 요소 동기화
+     ========================== */
 
   $(".scrollcontrollerinner").css({
     height: $("#wrappercontainermenu").height() + "px",
@@ -160,17 +99,22 @@ $(document).ready(function () {
 
   $(".linked").attr("data-scrolling", "false");
 
-  $(".linked").scroll(function () {
-    if ($(this).attr("data-scrolling") == "false") {
-      $(".linked").not(this).attr("data-scrolling", "true");
-      $(".linked").not(this).scrollTop($(this).scrollTop());
+  $(".linked").on("scroll", function () {
+    var $this = $(this);
+    if ($this.attr("data-scrolling") === "false") {
+      $(".linked")
+        .not(this)
+        .attr("data-scrolling", "true")
+        .scrollTop($this.scrollTop());
     }
-    $(this).attr("data-scrolling", "false");
+    $this.attr("data-scrolling", "false");
   });
 
-  /* click appearing about */
+  /* ==========================
+     작가 소개 패널 토글
+     ========================== */
 
-  $(".author_name, .author_name_mobile, .btnclose").click(function () {
+  $(".author_name, .author_name_mobile, .btnclose").on("click", function () {
     $(".preprecontainer_menu").toggleClass("preprecontainermenuaddclass");
     $(".scrollcontroller").toggleClass("scrollcontrollermenuaddclass");
     $(".animatedparent").toggleClass("animatedparentaddclass");
@@ -180,35 +124,14 @@ $(document).ready(function () {
     $(".author_name_mobile").toggleClass("authornamemobileaddclass");
   });
 
-  $(".author_name, .author_name_mobile").click(function () {
+  // 모바일에서 이름 클릭 시, 약간의 딜레이 후 숨김/표시 클래스 토글
+  $(".author_name, .author_name_mobile").on("click", function () {
     setTimeout(function () {
       $(".author_name_mobile").toggleClass("showhideauthor");
     }, 750);
   });
 
-  $(".btnclose").click(function () {
+  $(".btnclose").on("click", function () {
     $(".author_name_mobile").toggleClass("showhideauthor");
   });
-
-  /* Kill css animation on resize */
-
-  $(document).load(function () {
-    setTimeout(function () {
-      $("body").removeClass("notransitionreal");
-    }, 500);
-  });
-
-  $(window).resize(function () {
-    $("body").toggleClass("notransition");
-  });
-
-  function resizedw() {
-    $("body").toggleClass("notransition");
-  }
-
-  var doit;
-  window.onresize = function () {
-    clearTimeout(doit);
-    doit = setTimeout(resizedw, 100);
-  };
 });
